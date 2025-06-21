@@ -143,9 +143,35 @@
             color: white;
             margin-top: 40px;
         }
+        /* Welcome overlay */
+        #welcome-overlay {
+          position: fixed;
+          top: 0; left: 0;
+          width: 100vw; height: 100vh;
+          background-color: #000000dd;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          opacity: 0;
+          animation: fadeIn 1s forwards;
+          z-index: 9999;
+        }
+
+        @keyframes fadeIn {
+          to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+    }
     </style>
 </head>
 <body>
+
+    <div id="welcome-overlay">Welcome To Exportir WoodChip No.1 In Indonesia</div>
 
     <header>
         <h1>Wood Chip</h1>
@@ -208,19 +234,56 @@
         <p><strong>Phone:</strong> +62 851-5524-9310</p>
         <p><strong>Address:</strong> Semarang Indah Blok D-11 no 7A, Semarang, Jawa Tengah, Indonesia</p>
         <p>Or, you can also fill this form to explain what you need.</p>
-       <form
-            action="https://formspree.io/f/xblykjyv"
-            method="POST">
-            <p><label for="name">Name:</label><br><input type="text" id="name" name="name"></p>
-            <p><label for="email">Email:</label><br><input type="email" id="email" name="email"></p>
-            <p><label for="message">The Order/Question:</label><br><textarea id="message" name="message" rows="5"></textarea></p>
-            <p><button type="submit">Send Us</button></p>
+        <p>You can input your phone on message if you want we'ar team to text you about <span style="color:purple"> future</span>
+        <form id="contact-form">
+            <p><label for="name">Name:</label><br><input type="text" id="name" name="user_name" required></p>
+            <p><label for="email">Email:</label><br><input type="email" id="email" name="user_email" required></p>
+            <p><label for="message">Message:</label><br><textarea id="message" name="message" rows="5" required></textarea></p>
+            <p><button type="submit" id="send-button">Send Message</button></p>
         </form>
     </div>
 
     <footer>
         <p>&copy; 2025 t. All rights reserved.</p>
     </footer>
+
+    <script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+    <script type="text/javascript">
+       (function() {
+          // !!! PENTING: Ganti "YOUR_PUBLIC_KEY" dengan Public Key Anda dari EmailJS !!!
+          emailjs.init("HgCtVAFMo41mCnVih");
+       })();
+
+       const contactForm = document.getElementById('contact-form');
+       const sendButton = document.getElementById('send-button');
+
+       contactForm.addEventListener('submit', function(event) {
+           event.preventDefault(); // Mencegah form untuk refresh halaman
+
+           sendButton.textContent = 'Sending...';
+           sendButton.disabled = true;
+
+           // !!! PENTING: Ganti "YOUR_SERVICE_ID" dan "YOUR_TEMPLATE_ID" dengan ID Anda dari EmailJS !!!
+           emailjs.sendForm('service_2ao10sr', 'template_p6uaub3', this)
+               .then(function() {
+                   alert('Your message has been sent successfully!');
+                   contactForm.reset(); // Mengosongkan form
+                   sendButton.textContent = 'Send Message';
+                   sendButton.disabled = false;
+               }, function(error) {
+                   alert('Failed to send your message. Please try again later. Error: ' + JSON.stringify(error));
+                   sendButton.textContent = 'Send Message';
+                   sendButton.disabled = false;
+               });
+       });
+
+        // Auto hilangkan welcome setelah 3 detik
+        setTimeout(() => {
+          const welcome = document.getElementById("welcome-overlay");
+          welcome.style.animation = "fadeOut 1s forwards";
+          setTimeout(() => welcome.remove(), 1000); // hapus dari DOM
+        }, 3000);
+    </script>
 
 </body>
 </html>
